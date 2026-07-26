@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "lightFastingTimer.v1";
-  const VERSION = "20260726t4";
+  const VERSION = "20260726t5";
   const DEFAULT_RESCUE_STEPS = [
     "先喝无热量的水",
     "再喝低卡的饮料",
@@ -24,7 +24,6 @@
     finishButton: document.getElementById("finishButton"),
     formHint: document.getElementById("formHint"),
     rescueList: document.getElementById("rescueList"),
-    rescueCheckinButton: document.getElementById("rescueCheckinButton"),
     rescueEditButton: document.getElementById("rescueEditButton"),
     rescueEditor: document.getElementById("rescueEditor"),
     rescueSaveButton: document.getElementById("rescueSaveButton"),
@@ -57,7 +56,7 @@
         active: parsed.active || null,
         sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
         rescueSteps: normalizeRescueSteps(parsed.rescueSteps),
-        rescueCheckins: Array.isArray(parsed.rescueCheckins) ? parsed.rescueCheckins : []
+        rescueCheckins: normalizeRescueCheckins(parsed.rescueCheckins)
       };
     } catch (error) {
       return {
@@ -77,6 +76,37 @@
       const text = String(value[index] || "").trim();
       return text || fallback;
     });
+  }
+
+  function normalizeRescueCheckins(value) {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value.map((item) => {
+      if (typeof item === "string") {
+        return {
+          createdAt: item,
+          stepIndex: null,
+          stepLabel: "应急打卡"
+        };
+      }
+
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+
+      const stepIndex = Number.isInteger(item.stepIndex) && item.stepIndex >= 0 && item.stepIndex < DEFAULT_RESCUE_STEPS.length
+        ? item.stepIndex
+        : null;
+      const fallbackLabel = stepIndex === null ? "应急打卡" : DEFAULT_RESCUE_STEPS[stepIndex];
+      return {
+        createdAt: item.createdAt,
+        stepIndex,
+        stepLabel: String(item.stepLabel || fallbackLabel).trim() || fallbackLabel
+      };
+    }).filter((item) => item && item.createdAt && !Number.isNaN(new Date(item.createdAt).getTime()))
+      .slice(0, 60);
   }
 
   function saveState() {
@@ -280,9 +310,18 @@
     render();
   }
 
-  function checkinRescue() {
-    state.rescueCheckins.unshift(new Date().toISOString());
-    state.rescueCheckins = state.rescueCheckins.slice(0, 30);
+  function checkinRescue(stepIndex) {
+    const safeIndex = Number(stepIndex);
+    if (!Number.isInteger(safeIndex) || safeIndex < 0 || safeIndex >= state.rescueSteps.length) {
+      return;
+    }
+
+    state.rescueCheckins.unshift({
+      createdAt: new Date().toISOString(),
+      stepIndex: safeIndex,
+      stepLabel: state.rescueSteps[safeIndex]
+    });
+    state.rescueCheckins = state.rescueCheckins.slice(0, 60);
     saveState();
     renderRescue();
   }
@@ -424,15 +463,26 @@
   function renderRescue() {
     els.rescueList.innerHTML = state.rescueSteps.map((step, index) => `
       <li>
-        <span>${index + 1}</span>
-        <strong>${escapeHtml(step)}</strong>
+        <div class="rescue-main">
+          <span class="rescue-number">${index + 1}</span>
+          <strong>${escapeHtml(step)}</strong>
+        </div>
+        <div class="rescue-action-row">
+          <small>${escapeHtml(getRescueStepTime(index))}</small>
+          <button class="rescue-checkin" type="button" data-rescue-index="${index}">打卡</button>
+        </div>
       </li>
     `).join("");
     if (els.rescueEditor.hidden) {
       syncRescueInputs();
     }
     const latest = state.rescueCheckins[0];
-    els.rescueLatest.textContent = latest ? formatDateTime(new Date(latest)) : "还没有";
+    els.rescueLatest.textContent = latest ? `${latest.stepLabel} ${formatDateTime(new Date(latest.createdAt))}` : "还没有";
+  }
+
+  function getRescueStepTime(index) {
+    const checkin = state.rescueCheckins.find((item) => item.stepIndex === index);
+    return checkin ? `上次：${formatDateTime(new Date(checkin.createdAt))}` : "还没有打卡";
   }
 
   function syncRescueInputs() {
@@ -473,7 +523,16 @@
     els.startButton.addEventListener("click", startFast);
     els.finishButton.addEventListener("click", finishFast);
     els.clearButton.addEventListener("click", clearHistory);
-    els.rescueCheckinButton.addEventListener("click", checkinRescue);
+    els.rescueList.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) {
+        return;
+      }
+      const button = event.target.closest("[data-rescue-index]");
+      if (!button) {
+        return;
+      }
+      checkinRescue(Number(button.dataset.rescueIndex));
+    });
     els.rescueEditButton.addEventListener("click", () => {
       if (els.rescueEditor.hidden) {
         syncRescueInputs();

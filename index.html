@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0f766e">
+    <meta name="theme-color" content="#20231f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="轻断食">
@@ -16,9 +16,12 @@
   <body>
     <main class="app-shell">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">轻断食计时</p>
-          <h1>轻断食</h1>
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">16</div>
+          <div>
+            <p class="eyebrow">轻断食计时</p>
+            <h1>轻断食</h1>
+          </div>
         </div>
         <div class="status-pill" id="fastStatus">未开始</div>
       </header>
@@ -37,7 +40,7 @@
             <button class="ghost" type="button" id="rescueEditButton">自定义</button>
           </div>
 
-          <ol class="rescue-list" id="rescueList">
+          <ol class="rescue-list" id="rescueList" aria-label="救急步骤">
             <li>
               <span>1</span>
               <strong>先喝无热量的水</strong>
@@ -55,10 +58,6 @@
               <strong>然后再忍30分钟</strong>
             </li>
           </ol>
-
-          <div class="home-actions">
-            <button class="primary" type="button" id="rescueCheckinButton">应急打卡</button>
-          </div>
 
           <div class="rescue-editor" id="rescueEditor" hidden>
             <div class="rescue-edit-grid">
@@ -96,7 +95,7 @@
             <strong id="homeTodayTotal">0小时0分</strong>
           </div>
           <div class="mini-total">
-            <span>最近打卡</span>
+            <span>最近救急</span>
             <strong id="rescueLatest">还没有</strong>
           </div>
         </section>
