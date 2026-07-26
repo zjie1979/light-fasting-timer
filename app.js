@@ -2,7 +2,13 @@
   "use strict";
 
   const STORAGE_KEY = "lightFastingTimer.v1";
-  const VERSION = "20260726t3";
+  const VERSION = "20260726t4";
+  const DEFAULT_RESCUE_STEPS = [
+    "先喝无热量的水",
+    "再喝低卡的饮料",
+    "最后吃番茄、黄瓜",
+    "然后再忍30分钟"
+  ];
   const els = {
     status: document.getElementById("fastStatus"),
     countdown: document.getElementById("countdown"),
@@ -17,6 +23,19 @@
     startButton: document.getElementById("startButton"),
     finishButton: document.getElementById("finishButton"),
     formHint: document.getElementById("formHint"),
+    rescueList: document.getElementById("rescueList"),
+    rescueCheckinButton: document.getElementById("rescueCheckinButton"),
+    rescueEditButton: document.getElementById("rescueEditButton"),
+    rescueEditor: document.getElementById("rescueEditor"),
+    rescueSaveButton: document.getElementById("rescueSaveButton"),
+    rescueResetButton: document.getElementById("rescueResetButton"),
+    rescueLatest: document.getElementById("rescueLatest"),
+    rescueInputs: [
+      document.getElementById("rescueStep1"),
+      document.getElementById("rescueStep2"),
+      document.getElementById("rescueStep3"),
+      document.getElementById("rescueStep4")
+    ],
     homeTodayTotal: document.getElementById("homeTodayTotal"),
     todayTotal: document.getElementById("todayTotal"),
     plannedDuration: document.getElementById("plannedDuration"),
@@ -36,11 +55,28 @@
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       return {
         active: parsed.active || null,
-        sessions: Array.isArray(parsed.sessions) ? parsed.sessions : []
+        sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
+        rescueSteps: normalizeRescueSteps(parsed.rescueSteps),
+        rescueCheckins: Array.isArray(parsed.rescueCheckins) ? parsed.rescueCheckins : []
       };
     } catch (error) {
-      return { active: null, sessions: [] };
+      return {
+        active: null,
+        sessions: [],
+        rescueSteps: DEFAULT_RESCUE_STEPS.slice(),
+        rescueCheckins: []
+      };
     }
+  }
+
+  function normalizeRescueSteps(value) {
+    if (!Array.isArray(value)) {
+      return DEFAULT_RESCUE_STEPS.slice();
+    }
+    return DEFAULT_RESCUE_STEPS.map((fallback, index) => {
+      const text = String(value[index] || "").trim();
+      return text || fallback;
+    });
   }
 
   function saveState() {
@@ -107,6 +143,10 @@
 
   function formatCurrentTime(date) {
     return `${formatShortDate(date)} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+
+  function formatDateTime(date) {
+    return `${formatShortDate(date)} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
   function splitDurationByDay(startDate, endDate) {
@@ -240,6 +280,27 @@
     render();
   }
 
+  function checkinRescue() {
+    state.rescueCheckins.unshift(new Date().toISOString());
+    state.rescueCheckins = state.rescueCheckins.slice(0, 30);
+    saveState();
+    renderRescue();
+  }
+
+  function saveRescueSteps() {
+    state.rescueSteps = normalizeRescueSteps(els.rescueInputs.map((input) => input.value));
+    saveState();
+    els.rescueEditor.hidden = true;
+    renderRescue();
+  }
+
+  function resetRescueSteps() {
+    state.rescueSteps = DEFAULT_RESCUE_STEPS.slice();
+    saveState();
+    syncRescueInputs();
+    renderRescue();
+  }
+
   function applyQuickDuration(hours) {
     const start = parseInput(els.startTime.value) || new Date();
     start.setSeconds(0, 0);
@@ -360,9 +421,39 @@
     els.historyList.innerHTML = rows.join("");
   }
 
+  function renderRescue() {
+    els.rescueList.innerHTML = state.rescueSteps.map((step, index) => `
+      <li>
+        <span>${index + 1}</span>
+        <strong>${escapeHtml(step)}</strong>
+      </li>
+    `).join("");
+    if (els.rescueEditor.hidden) {
+      syncRescueInputs();
+    }
+    const latest = state.rescueCheckins[0];
+    els.rescueLatest.textContent = latest ? formatDateTime(new Date(latest)) : "还没有";
+  }
+
+  function syncRescueInputs() {
+    els.rescueInputs.forEach((input, index) => {
+      input.value = state.rescueSteps[index];
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
   function render() {
     renderTimer();
     renderStats();
+    renderRescue();
   }
 
   function bindEvents() {
@@ -382,6 +473,15 @@
     els.startButton.addEventListener("click", startFast);
     els.finishButton.addEventListener("click", finishFast);
     els.clearButton.addEventListener("click", clearHistory);
+    els.rescueCheckinButton.addEventListener("click", checkinRescue);
+    els.rescueEditButton.addEventListener("click", () => {
+      if (els.rescueEditor.hidden) {
+        syncRescueInputs();
+      }
+      els.rescueEditor.hidden = !els.rescueEditor.hidden;
+    });
+    els.rescueSaveButton.addEventListener("click", saveRescueSteps);
+    els.rescueResetButton.addEventListener("click", resetRescueSteps);
     els.startTime.addEventListener("change", updatePlannedDuration);
     els.endTime.addEventListener("change", updatePlannedDuration);
   }

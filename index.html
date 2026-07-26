@@ -34,9 +34,10 @@
         <section class="home-panel">
           <div class="section-head">
             <h2>坚持不下去时</h2>
+            <button class="ghost" type="button" id="rescueEditButton">自定义</button>
           </div>
 
-          <ol class="rescue-list">
+          <ol class="rescue-list" id="rescueList">
             <li>
               <span>1</span>
               <strong>先喝无热量的水</strong>
@@ -54,6 +55,35 @@
               <strong>然后再忍30分钟</strong>
             </li>
           </ol>
+
+          <div class="home-actions">
+            <button class="primary" type="button" id="rescueCheckinButton">应急打卡</button>
+          </div>
+
+          <div class="rescue-editor" id="rescueEditor" hidden>
+            <div class="rescue-edit-grid">
+              <label>
+                <span>第1步</span>
+                <input id="rescueStep1" type="text" maxlength="18">
+              </label>
+              <label>
+                <span>第2步</span>
+                <input id="rescueStep2" type="text" maxlength="18">
+              </label>
+              <label>
+                <span>第3步</span>
+                <input id="rescueStep3" type="text" maxlength="18">
+              </label>
+              <label>
+                <span>第4步</span>
+                <input id="rescueStep4" type="text" maxlength="18">
+              </label>
+            </div>
+            <div class="actions compact-actions">
+              <button class="primary" type="button" id="rescueSaveButton">保存</button>
+              <button class="secondary" type="button" id="rescueResetButton">恢复默认</button>
+            </div>
+          </div>
         </section>
 
         <section class="home-summary">
@@ -64,6 +94,10 @@
           <div class="mini-total">
             <span>今日已禁食</span>
             <strong id="homeTodayTotal">0小时0分</strong>
+          </div>
+          <div class="mini-total">
+            <span>最近打卡</span>
+            <strong id="rescueLatest">还没有</strong>
           </div>
         </section>
       </section>

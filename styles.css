@@ -442,6 +442,43 @@ input {
   padding: 0 12px;
 }
 
+.home-actions {
+  display: grid;
+  margin-top: 12px;
+}
+
+.rescue-editor {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.rescue-editor[hidden] {
+  display: none;
+}
+
+.rescue-edit-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.rescue-edit-grid label {
+  display: grid;
+  gap: 6px;
+}
+
+.rescue-edit-grid span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.compact-actions {
+  grid-template-columns: 1fr 1fr;
+}
+
 .history-list {
   display: grid;
   gap: 10px;
