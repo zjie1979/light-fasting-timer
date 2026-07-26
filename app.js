@@ -2,10 +2,11 @@
   "use strict";
 
   const STORAGE_KEY = "lightFastingTimer.v1";
-  const VERSION = "20260726t1";
+  const VERSION = "20260726t2";
   const els = {
     status: document.getElementById("fastStatus"),
     countdown: document.getElementById("countdown"),
+    currentTime: document.getElementById("currentTime"),
     timerLabel: document.getElementById("timerLabel"),
     timerSubtitle: document.getElementById("timerSubtitle"),
     progressFill: document.getElementById("progressFill"),
@@ -100,6 +101,10 @@
 
   function formatTime(date) {
     return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function formatCurrentTime(date) {
+    return `${formatShortDate(date)} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 
   function splitDurationByDay(startDate, endDate) {
@@ -253,6 +258,7 @@
 
   function renderTimer() {
     const now = new Date();
+    els.currentTime.textContent = formatCurrentTime(now);
     updatePlannedDuration();
 
     if (!state.active) {
