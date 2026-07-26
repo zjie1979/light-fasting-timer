@@ -2,11 +2,12 @@
   "use strict";
 
   const STORAGE_KEY = "lightFastingTimer.v1";
-  const VERSION = "20260726t2";
+  const VERSION = "20260726t3";
   const els = {
     status: document.getElementById("fastStatus"),
     countdown: document.getElementById("countdown"),
-    currentTime: document.getElementById("currentTime"),
+    currentTimeHome: document.getElementById("currentTimeHome"),
+    currentTimeTimer: document.getElementById("currentTimeTimer"),
     timerLabel: document.getElementById("timerLabel"),
     timerSubtitle: document.getElementById("timerSubtitle"),
     progressFill: document.getElementById("progressFill"),
@@ -16,6 +17,7 @@
     startButton: document.getElementById("startButton"),
     finishButton: document.getElementById("finishButton"),
     formHint: document.getElementById("formHint"),
+    homeTodayTotal: document.getElementById("homeTodayTotal"),
     todayTotal: document.getElementById("todayTotal"),
     plannedDuration: document.getElementById("plannedDuration"),
     statTodayTotal: document.getElementById("statTodayTotal"),
@@ -258,7 +260,9 @@
 
   function renderTimer() {
     const now = new Date();
-    els.currentTime.textContent = formatCurrentTime(now);
+    const currentTimeText = formatCurrentTime(now);
+    els.currentTimeHome.textContent = currentTimeText;
+    els.currentTimeTimer.textContent = currentTimeText;
     updatePlannedDuration();
 
     if (!state.active) {
@@ -303,6 +307,7 @@
     }
 
     els.todayTotal.textContent = formatDuration(todayMs);
+    els.homeTodayTotal.textContent = formatDuration(todayMs);
     els.statTodayTotal.textContent = formatDuration(todayMs);
     els.statSevenDayAverage.textContent = formatDuration(sevenDayMs / 7);
     els.statSessionAverage.textContent = formatDuration(sessionAverage);
@@ -365,8 +370,8 @@
       tab.addEventListener("click", () => {
         const target = tab.dataset.tab;
         document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
-        document.getElementById("timerPage").classList.toggle("active", target === "timer");
-        document.getElementById("statsPage").classList.toggle("active", target === "stats");
+        document.querySelectorAll(".page").forEach((page) => page.classList.remove("active"));
+        document.getElementById(`${target}Page`).classList.add("active");
       });
     });
 

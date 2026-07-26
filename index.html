@@ -24,11 +24,51 @@
       </header>
 
       <nav class="tabs" aria-label="页面切换">
-        <button class="tab active" type="button" data-tab="timer">倒计时</button>
+        <button class="tab active" type="button" data-tab="home">首页</button>
+        <button class="tab" type="button" data-tab="timer">倒计时</button>
         <button class="tab" type="button" data-tab="stats">统计</button>
+        <button class="tab" type="button" data-tab="records">记录</button>
       </nav>
 
-      <section class="page active" id="timerPage">
+      <section class="page active" id="homePage">
+        <section class="home-panel">
+          <div class="section-head">
+            <h2>坚持不下去时</h2>
+          </div>
+
+          <ol class="rescue-list">
+            <li>
+              <span>1</span>
+              <strong>先喝无热量的水</strong>
+            </li>
+            <li>
+              <span>2</span>
+              <strong>再喝低卡的饮料</strong>
+            </li>
+            <li>
+              <span>3</span>
+              <strong>最后吃番茄、黄瓜</strong>
+            </li>
+            <li>
+              <span>4</span>
+              <strong>然后再忍30分钟</strong>
+            </li>
+          </ol>
+        </section>
+
+        <section class="home-summary">
+          <div class="current-time-row">
+            <span>现在时间</span>
+            <strong id="currentTimeHome">--:--:--</strong>
+          </div>
+          <div class="mini-total">
+            <span>今日已禁食</span>
+            <strong id="homeTodayTotal">0小时0分</strong>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="timerPage">
         <section class="timer-panel">
           <div class="timer-ring" aria-live="polite">
             <div class="timer-label" id="timerLabel">距离结束</div>
@@ -45,7 +85,7 @@
 
           <div class="current-time-row">
             <span>现在时间</span>
-            <strong id="currentTime">--:--:--</strong>
+            <strong id="currentTimeTimer">--:--:--</strong>
           </div>
         </section>
 
@@ -104,7 +144,9 @@
             <strong id="statSessionCount">0次</strong>
           </article>
         </section>
+      </section>
 
+      <section class="page" id="recordsPage">
         <section class="history-panel">
           <div class="section-head">
             <h2>历史记录</h2>

@@ -97,7 +97,7 @@ h2 {
 
 .tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   padding: 5px;
   border: 1px solid var(--line);
@@ -131,6 +131,8 @@ h2 {
 .timer-panel,
 .form-panel,
 .history-panel,
+.home-panel,
+.home-summary,
 .summary-strip,
 .stat-card {
   border: 1px solid rgba(217, 226, 223, 0.94);
@@ -141,6 +143,53 @@ h2 {
 
 .timer-panel {
   padding: 20px;
+}
+
+.home-panel,
+.home-summary {
+  padding: 14px;
+}
+
+.rescue-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rescue-list li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfdfc;
+}
+
+.rescue-list span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--accent);
+  font-weight: 850;
+}
+
+.rescue-list strong {
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.home-summary {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .timer-ring {
@@ -228,6 +277,28 @@ h2 {
 }
 
 .current-time-row strong {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.mini-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.mini-total span {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mini-total strong {
   font-size: 18px;
   line-height: 1;
 }
@@ -420,7 +491,8 @@ input {
 
   .actions,
   .summary-strip,
-  .stats-grid {
+  .stats-grid,
+  .tabs {
     grid-template-columns: 1fr;
   }
 }

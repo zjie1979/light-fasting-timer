@@ -1,4 +1,4 @@
-const CACHE_NAME = "light-fasting-timer-20260726t2";
+const CACHE_NAME = "light-fasting-timer-20260726t3";
 const ASSETS = [
   "./",
   "./index.html",
