@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f766e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="轻断食">
+    <title>轻断食</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="apple-touch-icon" href="./icons/icon-180.png">
+    <link rel="icon" href="./icons/icon-192.png">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">轻断食计时</p>
+          <h1>轻断食</h1>
+        </div>
+        <div class="status-pill" id="fastStatus">未开始</div>
+      </header>
+
+      <nav class="tabs" aria-label="页面切换">
+        <button class="tab active" type="button" data-tab="timer">倒计时</button>
+        <button class="tab" type="button" data-tab="stats">统计</button>
+      </nav>
+
+      <section class="page active" id="timerPage">
+        <section class="timer-panel">
+          <div class="timer-ring" aria-live="polite">
+            <div class="timer-label" id="timerLabel">距离结束</div>
+            <div class="timer-value" id="countdown">00:00:00</div>
+            <div class="timer-subtitle" id="timerSubtitle">设置禁食时间后开始</div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+          </div>
+        </section>
+
+        <section class="form-panel">
+          <div class="field-group">
+            <label for="startTime">开始禁食</label>
+            <input id="startTime" type="datetime-local">
+          </div>
+          <div class="field-group">
+            <label for="endTime">结束禁食</label>
+            <input id="endTime" type="datetime-local">
+          </div>
+
+          <div class="quick-grid" aria-label="快捷时长">
+            <button type="button" data-hours="12">12小时</button>
+            <button type="button" data-hours="14">14小时</button>
+            <button type="button" data-hours="16">16小时</button>
+            <button type="button" data-hours="18">18小时</button>
+          </div>
+
+          <div class="actions">
+            <button class="primary" type="button" id="startButton">开始禁食</button>
+            <button class="secondary" type="button" id="finishButton">结束并记录</button>
+          </div>
+          <p class="hint" id="formHint">可以设置任意开始和结束时间，跨天会自动计算。</p>
+        </section>
+
+        <section class="summary-strip">
+          <div>
+            <span>今日已禁食</span>
+            <strong id="todayTotal">0小时0分</strong>
+          </div>
+          <div>
+            <span>本次计划</span>
+            <strong id="plannedDuration">0小时0分</strong>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="statsPage">
+        <section class="stats-grid">
+          <article class="stat-card">
+            <span>今日总禁时</span>
+            <strong id="statTodayTotal">0小时0分</strong>
+          </article>
+          <article class="stat-card">
+            <span>近7天日均</span>
+            <strong id="statSevenDayAverage">0小时0分</strong>
+          </article>
+          <article class="stat-card">
+            <span>每次平均</span>
+            <strong id="statSessionAverage">0小时0分</strong>
+          </article>
+          <article class="stat-card">
+            <span>完成次数</span>
+            <strong id="statSessionCount">0次</strong>
+          </article>
+        </section>
+
+        <section class="history-panel">
+          <div class="section-head">
+            <h2>历史记录</h2>
+            <button class="ghost" type="button" id="clearButton">清空</button>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
